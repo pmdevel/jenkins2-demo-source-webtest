@@ -5,9 +5,6 @@ import org.junit.Test;
 import se.pensionsmyndigheten.demo.WebAppTest;
 
 import java.io.IOException;
-import java.util.logging.Logger;
-
-import static junit.framework.Assert.assertTrue;
 
 public class SystemTests_Suite2 extends WebAppTest {
 
