@@ -1,4 +1,4 @@
-package se.pensionsmyndigheten.demo.selenium;
+package se.pensionsmyndigheten.demo;
 
 
 import static junit.framework.Assert.assertTrue;
