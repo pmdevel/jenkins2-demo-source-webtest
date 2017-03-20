@@ -1,82 +1,77 @@
 package se.pensionsmyndigheten.demo.selenium;
 
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DemoTest {
     private static Logger logger = Logger.getLogger(DemoTest.class.getName());
 
     private static String baseUrl;
     private static String profile;
-    private static WebDriver driver;
+    private static String homePage;
 
-
-    static {
-
-    }
 
     @BeforeClass
-    public static void openBrowser() {
-        String osName = System.getProperty("os.name");
-        if ( osName.matches(".*Linux.*")) {
-            logger.info("Running Linux...");
-            System.setProperty("webdriver.chrome.driver", "driver/linux64/chromedriver");
-
-        } else if ( osName.matches(".*Windows.*")) {
-            logger.info("Running Window...");
-            System.setProperty("webdriver.chrome.driver", "driver/win32/chromedriver");
-
-        } else if ( osName.matches(".*Mac.*")) {
-            logger.info("Running Linux...");
-            System.setProperty("webdriver.chrome.driver", "driver/mac64/chromedriver");
-        }
-
+    public static void getHomePage() {
         baseUrl = System.getProperty("webdriver.base.url");
         profile = System.getProperty("spring.profiles.active");
-        driver = new ChromeDriver();
-        driver.get(baseUrl);
-        //screenshotHelper = new ScreenshotHelper();
-    }
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(
+                    new InputStreamReader(
+                            new URL(baseUrl)
+                                    .openConnection()
+                                    .getInputStream()));
 
-    @AfterClass
-    public static void closeBrowser() {
-        driver.close();
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+            homePage = sb.toString();
+        } catch (IOException ioe) {
+
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException ignore) {}
+        }
+
     }
 
     @Test
     public void checkPageTitleIsCodeNite_PROFILE() throws IOException {
+        //<html><head><title>Code Nite SYSTEMTEST</title></head><html><body><font color='blue'><h1 id='greeting'>Hello from SYSTEMTEST!!!</h1></font></body></html>
         // Expected title: 'Code Nite <PROFILE>'
         String expectedTitle = String.format("Code Nite %s", profile.toUpperCase());
-        assertEquals("The page title should equal 'Code Nite <profile>'", expectedTitle, driver.getTitle());
-        logger.info("Title is: " + driver.getTitle() + " (OK)");
+        Pattern p = Pattern.compile(".*" + expectedTitle + ".*");
+        Matcher m = p.matcher(homePage);
+        assertTrue("Home page contains title '" + expectedTitle + "'", m.find());
+        logger.info("Home page contains title: '" + expectedTitle + "'");
 
     }
 
     @Test
     public void checkHelloMessageIs_HelloFrom_PROFILE() throws IOException {
+        //<html><head><title>Code Nite SYSTEMTEST</title></head><html><body><font color='blue'><h1 id='greeting'>Hello from SYSTEMTEST!!!</h1></font></body></html>
         // Expected helloMessage: 'Hello from <PROFILE>!!!'
         String expectedHelloMessage = String.format("Hello from %s!!!", profile.toUpperCase());
-        WebElement searchField = driver.findElement(By.id("greeting"));
-        String helloMessage = searchField.getText();
-        assertEquals("The hello message should be 'Hello from <profile>!!!'", expectedHelloMessage, helloMessage);
-        logger.info("Field: " + searchField.getText() + "(OK)");
+        Pattern p = Pattern.compile(".*" + expectedHelloMessage + ".*");
+        Matcher m = p.matcher(homePage);
+        assertTrue("Home contains hello message '" + expectedHelloMessage + "'", m.find());
+        logger.info("Home page contains hello message: '" + expectedHelloMessage + "'");
+
     }
 
 }
