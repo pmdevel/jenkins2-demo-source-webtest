@@ -57,7 +57,7 @@ public class DemoTest {
         String expectedTitle = String.format("Code Nite %s", profile.toUpperCase());
         Pattern p = Pattern.compile(".*" + expectedTitle + ".*");
         Matcher m = p.matcher(homePage);
-        assertTrue("Home page contains title '" + expectedTitle + "'", m.find());
+        assertTrue("Home page does NOT contain title '" + expectedTitle + "'", m.find());
         logger.info("Home page contains title: '" + expectedTitle + "'");
 
     }
@@ -69,7 +69,7 @@ public class DemoTest {
         String expectedHelloMessage = String.format("Hello from %s!!!", profile.toUpperCase());
         Pattern p = Pattern.compile(".*" + expectedHelloMessage + ".*");
         Matcher m = p.matcher(homePage);
-        assertTrue("Home contains hello message '" + expectedHelloMessage + "'", m.find());
+        assertTrue("Home page does NOT contain hello message '" + expectedHelloMessage + "'", m.find());
         logger.info("Home page contains hello message: '" + expectedHelloMessage + "'");
 
     }
