@@ -41,7 +41,7 @@ public class DemoTest {
             }
             homePage = sb.toString();
         } catch (IOException ioe) {
-
+            logger.info(ioe.getMessage());
         } finally {
             try {
                 bufferedReader.close();
