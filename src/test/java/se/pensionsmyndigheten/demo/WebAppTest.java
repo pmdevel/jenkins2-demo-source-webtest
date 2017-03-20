@@ -23,7 +23,7 @@ public class WebAppTest {
     @BeforeClass
     public static void getHomePage() throws Exception {
         sutUrl = System.getProperty("sut.url");
-        sutUrl = System.getProperty("sut.version");
+        sutVersion = System.getProperty("sut.version");
         profile = System.getProperty("spring.profiles.active");
         assertTrue("Subject under test should be passed in via -Dsut.url=...", sutUrl!=null);
         assertTrue("Subject under test version should be passed in via -Dsut.version=...", sutVersion!=null);
